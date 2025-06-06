@@ -1,0 +1,36 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #4e6b8c;
+    padding: 15px 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-left, .nav-right {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-center {
+    flex-grow: 1;
+    text-align: center;
+}
+
+
+.nav-left a, .nav-right a, .nav-center a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.nav-left a:hover, .nav-right a:hover, .nav-center a:hover {
+    color: #f39c12;
+}
+
+.nav-center h1 {
+    color: #ecf0f1;
+    font-size: 22px;
+    font-weight: bold;
+}
