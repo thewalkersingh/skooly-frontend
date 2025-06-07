@@ -1,0 +1,9 @@
+export default function Home() {
+  return (
+    <div>
+      <h1 align="center">Welcome to our App</h1>
+      <img src="/7392263.jpg" alt="School Wallpaper" height="70%" width="100%"/>
+    </div>
+  )
+}
+
