@@ -2,6 +2,8 @@ import React, {Suspense} from 'react';
 import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Home from "./pages/Home.jsx";
+import MarkAttendance from "./components/Attendance/MarkAttendance.jsx";
+import AttendanceList from "./components/Attendance/AttendanceList.jsx";
 
 const SchoolList = React.lazy(() => import('./components/School/SchoolList'));
 const SchoolForm = React.lazy(() => import('./components/School/SchoolForm'));
@@ -35,6 +37,8 @@ function App() {
           <Route path="/courses" element={<CourseList/>}/>
           <Route path="/courses/new" element={<CourseForm/>}/>
           <Route path="/courses/:id/edit" element={<CourseForm/>}/>
+          <Route path="/attendance" element={<AttendanceList/>}/>
+          <Route path="/attendance/new" element={<MarkAttendance/>}/>
           <Route path="/login" element={<Login/>}/>
           <Route path="/signup" element={<Signup/>}/>
           <Route path="/contact" element={<Contact/>}/>
