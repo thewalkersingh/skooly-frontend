@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Safely load the env var
 const API_BASE = import.meta.env.VITE_API_BASE;
 if (!API_BASE) {
   console.warn('⚠️ VITE_API_BASE is not defined! Falling back to localhost.');

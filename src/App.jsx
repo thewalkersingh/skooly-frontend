@@ -25,7 +25,7 @@ function App() {
         <Routes>
           
           <Route path="/" element={<Home/>}/>
-          {/*<Route path="/" element={<Navigate to="/schools" replace/>}/>*/}
+          <Route path="/" element={<Navigate to="/" replace/>}/>
           <Route path="/schools" element={<SchoolList/>}/>
           <Route path="/schools/new" element={<SchoolForm/>}/>
           <Route path="/schools/:id/edit" element={<SchoolForm/>}/>

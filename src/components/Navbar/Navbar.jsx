@@ -7,8 +7,10 @@ export default function Navbar() {
     <nav className="navbar">
       {/* Left Side: Menu */}
       <div className="nav-left">
+        <Link to="/schools">School</Link>
         <Link to="/students">Students</Link>
         <Link to="/teachers">Teachers</Link>
+        <Link to="/attendance">Attendance</Link>
         <Link to="/courses">Courses</Link>
         <Link to="/sports">Sports</Link>
         <Link to="/facilities">Facilities</Link>
@@ -16,7 +18,7 @@ export default function Navbar() {
       
       {/* Center: School Name */}
       <div className="nav-center">
-        <Link to="/schools">Skooly</Link>
+        <Link to="/">Skooly</Link>
       </div>
       
       {/* Right Side: Authentication & Contact */}
