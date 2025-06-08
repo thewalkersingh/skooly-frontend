@@ -13,6 +13,11 @@ const TeacherList = React.lazy(() => import('./components/Teacher/TeacherList'))
 const TeacherForm = React.lazy(() => import('./components/Teacher/TeacherForm'));
 const CourseList = React.lazy(() => import('./components/Course/CourseList'));
 const CourseForm = React.lazy(() => import('./components/Course/CourseForm'));
+import AssignmentList from './components/Assignments/AssignmentList';
+import AssignmentForm from './components/Assignments/AssignmentForm';
+import SubmissionForm from './components/Submissions/SubmissionForm';
+import GradeForm from './components/Grades/GradeForm';
+
 const Login = React.lazy(() => import('./components/Auth/Login'));
 const Signup = React.lazy(() => import('./components/Auth/Signup'));
 const Contact = React.lazy(() => import('./components/Contact/Contact'));
@@ -29,17 +34,25 @@ function App() {
           <Route path="/schools" element={<SchoolList/>}/>
           <Route path="/schools/new" element={<SchoolForm/>}/>
           <Route path="/schools/:id/edit" element={<SchoolForm/>}/>
+          
           <Route path="/students" element={<StudentList/>}/>
           <Route path="/students/new" element={<StudentForm/>}/>
           <Route path="/students/:id/edit" element={<StudentForm/>}/>
           <Route path="/teachers" element={<TeacherList/>}/>
           <Route path="/teachers/new" element={<TeacherForm/>}/>
           <Route path="/teachers/:id/edit" element={<TeacherForm/>}/>
+          
           <Route path="/courses" element={<CourseList/>}/>
           <Route path="/courses/new" element={<CourseForm/>}/>
           <Route path="/courses/:id/edit" element={<CourseForm/>}/>
           <Route path="/attendance" element={<AttendanceList/>}/>
           <Route path="/attendance/new" element={<MarkAttendance/>}/>
+          
+          <Route path="/assignments" element={<AssignmentList/>}/>
+          <Route path="/assignments/new" element={<AssignmentForm/>}/>
+          <Route path="/submissions/new" element={<SubmissionForm/>}/>
+          <Route path="/grades/new" element={<GradeForm/>}/>
+          
           <Route path="/login" element={<Login/>}/>
           <Route path="/signup" element={<Signup/>}/>
           <Route path="/contact" element={<Contact/>}/>

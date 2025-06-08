@@ -5,27 +5,57 @@ import '../../styles/Navbar.css';
 export default function Navbar() {
   return (
     <nav className="navbar">
-      {/* Left Side: Menu */}
+      {/* Left Side: Logo */}
       <div className="nav-left">
-        <Link to="/schools">School</Link>
-        <Link to="/students">Students</Link>
-        <Link to="/teachers">Teachers</Link>
-        <Link to="/attendance">Attendance</Link>
-        <Link to="/courses">Courses</Link>
-        <Link to="/sports">Sports</Link>
-        <Link to="/facilities">Facilities</Link>
+        <Link to="/">
+          <img src="/logo.png" alt="Skooly Logo" className="logo"/>
+        </Link>
       </div>
       
-      {/* Center: School Name */}
+      {/* Center: Main Navigation Menu */}
       <div className="nav-center">
-        <Link to="/">Skooly</Link>
+        <ul className="nav-menu">
+          <li className="nav-item dropdown">
+            <span>School</span>
+            <ul className="dropdown-menu">
+              <li><Link to="/schools">Schools</Link></li>
+              <li><Link to="/sports">Sports</Link></li>
+              <li><Link to="/courses">Courses</Link></li>
+              <li><Link to="/facilities">Facilities</Link></li>
+              <li><Link to="/contact">Contact</Link></li>
+            </ul>
+          </li>
+          <li className="nav-item dropdown">
+            <span>Student</span>
+            <ul className="dropdown-menu">
+              <li><Link to="/students">Students</Link></li>
+              <li><Link to="/assignments">Assignments</Link></li>
+              <li><Link to="/submissions">Submissions</Link></li>
+            </ul>
+          </li>
+          <li className="nav-item dropdown">
+            <span>Teacher</span>
+            <ul className="dropdown-menu">
+              <li><Link to="/teachers">Teachers</Link></li>
+              <li><Link to="/attendance">Attendance</Link></li>
+              <li><Link to="/grades">Grades</Link></li>
+            </ul>
+          </li>
+          <li className="nav-item dropdown">
+            <span>More</span>
+            <ul className="dropdown-menu">
+              <li><Link to="/about">About</Link></li>
+              <li><Link to="/events">Events</Link></li>
+              <li><Link to="/news">News</Link></li>
+            </ul>
+          </li>
+        </ul>
       </div>
       
-      {/* Right Side: Authentication & Contact */}
+      {/* Right Side: Login/Signup */}
       <div className="nav-right">
-        <Link to="/login">Login</Link>
-        <Link to="/signup">Signup</Link>
-        <Link to="/contact">Contact</Link>
+        <Link to="/login" className="nav-auth">Login</Link>
+        <Link to="/signup" className="nav-auth">Signup</Link>
       </div>
     </nav>
   );
