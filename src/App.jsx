@@ -17,12 +17,21 @@ import AssignmentList from './components/Assignments/AssignmentList';
 import AssignmentForm from './components/Assignments/AssignmentForm';
 import SubmissionForm from './components/Submissions/SubmissionForm';
 import GradeForm from './components/Grades/GradeForm';
+import FeeDashboard from "./components/Fee/FeeDashboard.jsx";
+import DashboardOverview from "./components/Admin/DashboardOverview.jsx";
+import FeeManagement from "./components/Admin/FeeManagement.jsx";
+import ManageStudents from "./components/Admin/ManageStudents.jsx";
+import ManageTeachers from "./components/Admin/ManageTeachers.jsx";
+import ManageSchools from "./components/Admin/ManageSchools.jsx";
+import AdminDashboard from "./components/Admin/AdminDashboard.jsx";
 
 const Login = React.lazy(() => import('./components/Auth/Login'));
 const Signup = React.lazy(() => import('./components/Auth/Signup'));
 const Contact = React.lazy(() => import('./components/Contact/Contact'));
 
 function App() {
+  // Suppose you get studentId from user authentication state.
+  const studentId = 1; // or use your actual logic to fetch the student's ID
   return (
     <Router>
       <Navbar/>
@@ -53,6 +62,17 @@ function App() {
           <Route path="/submissions/new" element={<SubmissionForm/>}/>
           <Route path="/grades/new" element={<GradeForm/>}/>
           
+          <Route path="/student/fees" element={<FeeDashboard studentId={studentId}/>}/>
+          {/*<Route path="/admin" element={<Admin/>}/>*/}
+          
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminDashboard/>}>
+            <Route path="dashboard" element={<DashboardOverview/>}/>
+            <Route path="fees" element={<FeeManagement/>}/>
+            <Route path="students" element={<ManageStudents/>}/>
+            <Route path="teachers" element={<ManageTeachers/>}/>
+            <Route path="schools" element={<ManageSchools/>}/>
+          </Route>
           <Route path="/login" element={<Login/>}/>
           <Route path="/signup" element={<Signup/>}/>
           <Route path="/contact" element={<Contact/>}/>

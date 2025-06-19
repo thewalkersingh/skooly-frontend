@@ -42,6 +42,18 @@ export default function Navbar() {
             </ul>
           </li>
           <li className="nav-item dropdown">
+            <span>Admin</span>
+            <ul className="dropdown-menu">
+              <li><Link to="/admin/dashboard">Dashboard</Link></li>
+              <li><Link to="/admin/fees">Fee Management</Link></li>
+              <li><Link to="/admin/students">Manage Students</Link></li>
+              <li><Link to="/admin/teachers">Manage Teachers</Link></li>
+              <li><Link to="/admin/schools">Manage Schools</Link></li>
+              {/* Add more admin-specific links here as required */}
+            </ul>
+          </li>
+          
+          <li className="nav-item dropdown">
             <span>More</span>
             <ul className="dropdown-menu">
               <li><Link to="/about">About</Link></li>
