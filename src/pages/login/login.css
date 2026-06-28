@@ -1,0 +1,243 @@
+/* reuse lp-brand tokens from landing, or re-declare locally */
+.login-root {
+    display: flex;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    background: #0A0F1E;
+}
+
+/* ── LEFT PANEL ── */
+.login-left {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    background: linear-gradient(160deg, #1e1b4b 0%, #0f0c29 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 48px;
+}
+
+.login-left-orb {
+    position: absolute;
+    bottom: -160px;
+    right: -160px;
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+.login-left-content {
+    position: relative;
+    max-width: 380px;
+}
+
+.login-left-title {
+    font-size: clamp(24px, 2.5vw, 34px);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.8px;
+    line-height: 1.25;
+    margin-bottom: 32px;
+}
+
+.login-perks {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.login-perk {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: #C7D2FE;
+    line-height: 1.5;
+}
+
+.login-perk-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #6366F1;
+    flex-shrink: 0;
+}
+
+/* ── RIGHT PANEL ── */
+.login-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+}
+
+.login-sub {
+    font-size: 15px;
+    color: #94A3B8;
+    margin-bottom: 28px;
+}
+
+/* ── ERROR ── */
+.login-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: #FCA5A5;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* ── FORM ── */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.login-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #C7D2FE;
+}
+
+.login-input {
+    width: 100%;
+    background: #111827;
+    border: 1px solid rgba(99, 102, 241, 0.22);
+    border-radius: 8px;
+    padding: 11px 14px;
+    color: #fff;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.login-input::placeholder {
+    color: #475569;
+}
+
+.login-input:focus {
+    border-color: #6366F1;
+}
+
+.login-input-wrap {
+    position: relative;
+}
+
+.login-input-wrap .login-input {
+    padding-right: 42px;
+}
+
+.login-eye {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #64748B;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+.login-eye:hover {
+    color: #C7D2FE;
+}
+
+.login-submit {
+    width: 100%;
+    background: #4F46E5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.login-submit:hover:not(:disabled) {
+    background: #6366F1;
+    transform: translateY(-1px);
+}
+
+.login-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.login-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: login-spin 0.7s linear infinite;
+}
+
+@keyframes login-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.login-back {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.login-back a {
+    color: #6366F1;
+    font-weight: 500;
+}
+
+.login-back a:hover {
+    color: #818CF8;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+    .login-left {
+        display: none;
+    }
+
+    .login-right {
+        padding: 40px 20px;
+    }
+}

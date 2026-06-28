@@ -16,6 +16,7 @@ import ParentsPage from "@/pages/parents/ParentsPage";
 import NotificationsPage from "@/pages/notifications/NotificationsPage";
 import ActivityLogsPage from "@/pages/activity-logs/ActivityLogsPage";
 import LandingPage from "@/pages/landing/LandingPage.jsx";
+import LoginPage from "@/pages/login/LoginPage.jsx";
 
 // export default function App () {
 //   return (
@@ -48,8 +49,8 @@ export default function App () {
      <BrowserRouter>
        <Routes>
          {/* Public route */}
-         <Route path="/landing" element={<LandingPage/>}/>
-         
+         <Route path="/" element={<LandingPage/>}/>
+         <Route path="/login" element={<LoginPage/>}/> {/* ← add */}
          {/* Protected routes */}
          <Route element={<ProtectedRoute/>}>
            <Route element={<AppShell/>}>
