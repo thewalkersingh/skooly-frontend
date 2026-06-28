@@ -135,7 +135,7 @@ export default function LoginPage () {
            <p className="login-back">
              <a href="/" onClick={(e) => {
                e.preventDefault();
-               navigate("/");
+               navigate("/landing");
              }}>
                ← Back to home
              </a>

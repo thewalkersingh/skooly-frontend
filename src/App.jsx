@@ -49,7 +49,7 @@ export default function App () {
      <BrowserRouter>
        <Routes>
          {/* Public route */}
-         <Route path="/" element={<LandingPage/>}/>
+         <Route path="/landing" element={<LandingPage/>}/>
          <Route path="/login" element={<LoginPage/>}/> {/* ← add */}
          {/* Protected routes */}
          <Route element={<ProtectedRoute/>}>

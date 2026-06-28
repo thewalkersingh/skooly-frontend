@@ -125,11 +125,11 @@ export default function LandingPage() {
            <div className="lp-contact-items">
              <div className="lp-contact-item">
                <Mail size={18} />
-               <span>support@skooly.app</span>
+               <span>anysignup47@gmail.app</span>
              </div>
              <div className="lp-contact-item">
                <Phone size={18} />
-               <span>+1 (800) SKOOLY</span>
+               <span>+91 (9021977961) SKOOLY</span>
              </div>
              <div className="lp-contact-item">
                <Github size={18} />
