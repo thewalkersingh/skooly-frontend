@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { School, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
+import authApi from "@/services/authApi";
 import "./login.css";
 
 export default function LoginPage () {
@@ -12,6 +13,12 @@ export default function LoginPage () {
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [oauthToast, setOauthToast] = useState(false);
+  
+  const showOauthToast = () => {
+    setOauthToast(true);
+    setTimeout(() => setOauthToast(false), 3000);
+  };
   
   const handleChange = (e) =>
      setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
@@ -25,20 +32,11 @@ export default function LoginPage () {
     setLoading(true);
     setError(null);
     try {
-      // TODO: Replace with real JWT auth call
-      // const res = await authApi.login(form);
-      // await login(res.data);
-      await login({
-        id: 1,
-        username: form.username,
-        role: "ADMIN",
-        schoolId: 1,
-        schoolName: "Demo School",
-        token: "mock-jwt-token",
-      });
-      navigate("/");
+      const res = await authApi.login({ identifier: form.username, password: form.password });
+      await login(res.data.data);       // unwrap ApiResponse<T> → .data.data
+      navigate("/dashboard", { replace: true });
     } catch (err) {
-      setError(err.response?.data?.message ?? "Invalid username or password.");
+      setError(err.message ?? "Invalid username or password.");
     } finally {
       setLoading(false);
     }
@@ -132,12 +130,34 @@ export default function LoginPage () {
              </button>
            </div>
            
+           <div className="login-divider"><span>or continue with</span></div>
+           <div className="login-oauth">
+             <button className="login-oauth-btn" onClick={showOauthToast}>
+               <img src="https://www.svgrepo.com/show/475656/google-color.svg"
+                    width={18}
+                    height={18}
+                    alt="Google"/>
+               Google
+             </button>
+             <button className="login-oauth-btn" onClick={showOauthToast}>
+               <img src="https://www.svgrepo.com/show/452062/microsoft.svg"
+                    width={18}
+                    height={18}
+                    alt="Microsoft"/>
+               Microsoft
+             </button>
+           </div>
+           {oauthToast && (
+              <div className="login-toast">OAuth coming soon — stay tuned!</div>
+           )}
+           
            <p className="login-back">
-             <a href="/" onClick={(e) => {
-               e.preventDefault();
-               navigate("/landing");
-             }}>
-               ← Back to home
+             <a onClick={() => navigate("/forgot-password")} style={{ cursor: "pointer" }}>
+               Forgot password?
+             </a>
+             {" · "}
+             <a onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
+               Back to home
              </a>
            </p>
          </div>

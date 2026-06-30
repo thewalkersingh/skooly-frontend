@@ -1,0 +1,132 @@
+.dashboard-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #f87171;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.dashboard-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 4px;
+}
+
+/* ── ACTIVITY ── */
+.activity-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.activity-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+}
+
+.activity-dot.blue {
+    background: #3B82F6;
+}
+
+.activity-dot.green {
+    background: #22C55E;
+}
+
+.activity-dot.amber {
+    background: #F59E0B;
+}
+
+.activity-dot.purple {
+    background: #A855F7;
+}
+
+.activity-dot.indigo {
+    background: #6366F1;
+}
+
+.activity-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.activity-text {
+    font-size: 13px;
+    color: var(--gray-200, #E5E7EB);
+    line-height: 1.5;
+}
+
+.activity-time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--gray-400, #9CA3AF);
+}
+
+/* ── EXAMS ── */
+.exam-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.exam-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.exam-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.exam-badge.indigo {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818CF8;
+}
+
+.exam-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.exam-subject {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-200, #E5E7EB);
+}
+
+.exam-meta {
+    font-size: 12px;
+    color: var(--gray-400, #9CA3AF);
+}
+
+@media (max-width: 768px) {
+    .dashboard-bottom {
+        grid-template-columns: 1fr;
+    }
+}

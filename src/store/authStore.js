@@ -1,61 +1,59 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import authApi from "@/services/authApi";
 
-/**
- * Auth store — mock admin user during development.
- * JWT deferred until all features are built.
- *
- * TODO (when implementing JWT):
- *  1. Replace mockUser with real login API call
- *  2. Store real JWT token
- *  3. Implement real logout
- */
-// const MOCK_ADMIN = {
-//   id: 1,
-//   username: 'admin',
-//   role: 'ADMIN',
-//   schoolId: 1,
-//   schoolName: 'Demo School',
-// }
-//
-// export const useAuthStore = create(
-//   persist(
-//     (set) => ({
-//       user: MOCK_ADMIN,
-//       token: 'mock-token',
-//       isAuthenticated: true,
-//
-//       login: async (/* credentials */) => {
-//         // TODO: replace with real API call
-//         set({ user: MOCK_ADMIN, token: 'mock-token', isAuthenticated: true })
-//       },
-//
-//       logout: () => {
-//         set({ user: null, token: null, isAuthenticated: false })
-//       },
-//     }),
-//     {
-//       name: 'skooly-auth',
-//       partialize: (state) => ({ user: state.user, token: state.token }),
-//     }
-//   )
-// )
-
-export const useAuthStore = create((set) => ({
-  user: null,
-  token: "mock-token",
-  isAuthenticated: false,
-  
-  // Called from LandingPage with the selected school's user object
-  login: (userData) => {
-    set({
-      user: userData,
-      token: "mock-token",
-      isAuthenticated: true,
-    });
-  },
-  
-  logout: () => {
-    set({ user: null, token: null, isAuthenticated: false });
-  },
-}));
+export const useAuthStore = create(
+   persist(
+      (set, get) => ({
+        user: null,
+        accessToken: null,
+        refreshToken: null,
+        isAuthenticated: false,
+        
+        login: async (loginData) => {
+          // 1. Store tokens immediately so the /me request is authenticated
+          set({
+            accessToken: loginData.accessToken,
+            refreshToken: loginData.refreshToken,
+            isAuthenticated: true,
+            user: {
+              id: loginData.userId,
+              firstName: loginData.firstName,
+              lastName: loginData.lastName,
+              role: loginData.role,
+              status: loginData.status,
+              roleEntityId: loginData.roleEntityId,
+              firstLogin: loginData.firstLogin,
+            },
+          });
+          
+          // 2. Fetch full profile including schoolId
+          try {
+            const res = await authApi.me();
+            set((state) => ({
+              user: { ...state.user, ...res.data.data },
+            }));
+          } catch (err) {
+            console.warn("Could not fetch /auth/me:", err.message);
+          }
+        },
+        
+        setTokens: (accessToken, refreshToken) => {
+          set({ accessToken, refreshToken });
+        },
+        
+        logout: () => {
+          set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
+        },
+      }),
+      {
+        name: "skooly-auth",
+        partialize: (state) => ({
+          user: state.user,
+          accessToken: state.accessToken,
+          refreshToken: state.refreshToken,
+          isAuthenticated: state.isAuthenticated,
+        }),
+      }
+   )
+);
