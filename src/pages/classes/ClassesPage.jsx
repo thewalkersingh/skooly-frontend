@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Plus, Pencil, Trash2, BookOpen, Layers } from "lucide-react";
-import { classApi } from "@/services/classApi";
+import { classroomApi } from "@/services/classroomApi.js";
 import { useAuthStore } from "@/store/authStore";
 import { useToast } from "@/hooks/useToast";
 import ClassFormModal from "./ClassFormModal";
@@ -36,7 +36,7 @@ export default function ClassesPage () {
   const fetchClasses = useCallback(async () => {
     setClassLoading(true);
     try {
-      const res = await classApi.getAll(schoolId);
+      const res = await classroomApi.getAll(schoolId);
       setSections(Array.isArray(res.data) ? res.data : res.data.content ?? []);
     } catch (err) {
       toast({ message: err.message, type: "error" });
@@ -49,7 +49,7 @@ export default function ClassesPage () {
   const fetchSections = useCallback(async () => {
     setSectionLoading(true);
     try {
-      const res = await classApi.getAllSections(schoolId);
+      const res = await classroomApi.getAllSections(schoolId);
       setSections(res.data);
     } catch (err) {
       toast({ message: err.message, type: "error" });
@@ -75,10 +75,10 @@ export default function ClassesPage () {
     setClassSaving(true);
     try {
       if (editClass) {
-        await classApi.update(schoolId, editClass.id, payload);
+        await classroomApi.update(schoolId, editClass.id, payload);
         toast({ message: "Class updated successfully" });
       } else {
-        await classApi.create(schoolId, payload);
+        await classroomApi.create(schoolId, payload);
         toast({ message: "Class added successfully" });
       }
       setClassFormOpen(false);
@@ -94,7 +94,7 @@ export default function ClassesPage () {
   const handleClassDelete = async () => {
     setClassDeleting(true);
     try {
-      await classApi.delete(schoolId, deleteClass.id);
+      await classroomApi.delete(schoolId, deleteClass.id);
       toast({ message: "Class deleted successfully" });
       setDeleteClass(null);
       await fetchClasses();
@@ -110,7 +110,7 @@ export default function ClassesPage () {
   const handleSectionSubmit = async (payload) => {
     setSectionSaving(true);
     try {
-      await classApi.createSection(schoolId, payload);
+      await classroomApi.createSection(schoolId, payload);
       toast({ message: "Section added successfully" });
       setSectionFormOpen(false);
       await fetchSections();
@@ -124,7 +124,7 @@ export default function ClassesPage () {
   const handleSectionDelete = async () => {
     setSectionDeleting(true);
     try {
-      await classApi.deleteSection(schoolId, deleteSection.id);
+      await classroomApi.deleteSection(schoolId, deleteSection.id);
       toast({ message: "Section deleted successfully" });
       setDeleteSection(null);
       await fetchSections();

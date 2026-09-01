@@ -33,7 +33,14 @@ export default function LoginPage () {
     setError(null);
     try {
       const res = await authApi.login({ identifier: form.username, password: form.password });
-      await login(res.data.data);       // unwrap ApiResponse<T> → .data.data
+      const loginData = res.data.data;
+      
+      if (loginData.firstLogin) {
+        navigate(`/set-password?identifier=${encodeURIComponent(form.username)}`, { replace: true });
+        return;
+      }
+      
+      await login(loginData);
       navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(err.message ?? "Invalid username or password.");
@@ -156,10 +163,15 @@ export default function LoginPage () {
                Forgot password?
              </a>
              {" · "}
+             <a onClick={() => navigate("/register")} style={{ cursor: "pointer" }}>
+               Request access
+             </a>
+             {" · "}
              <a onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-               Back to home
+               ← Home
              </a>
            </p>
+           
          </div>
        </div>
      </div>

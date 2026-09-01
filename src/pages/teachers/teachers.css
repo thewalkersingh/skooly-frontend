@@ -2,8 +2,8 @@
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background-color: #ecfdf5;
-    color: #16a34a;
+    background-color: var(--primary-light);
+    color: var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,4 +26,20 @@
 .teacher-name-cell .username {
     font-size: var(--font-size-xs);
     color: var(--gray-400);
+}
+
+.subject-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.subject-checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--font-size-sm);
+    color: var(--gray-700);
+    cursor: pointer;
 }

@@ -3,7 +3,7 @@ import Sidebar from "./Sidebar";
 import Header from "./Header";
 
 const PAGE_TITLES = {
-  "/": "Dashboard",
+  "/dashboard": "Dashboard",
   "/students": "Students",
   "/teachers": "Teachers",
   "/classes": "Classes & Subjects",
@@ -24,7 +24,7 @@ export default function AppShell () {
   
   const title =
      Object.entries(PAGE_TITLES).find(([path]) =>
-        path === "/" ? location.pathname === "/" : location.pathname.startsWith(path)
+        location.pathname.startsWith(path)
      )?.[1] ?? "Skooly";
   
   return (

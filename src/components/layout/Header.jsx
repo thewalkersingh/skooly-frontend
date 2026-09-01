@@ -1,41 +1,6 @@
-import { Bell, ChevronDown, User, LogOut } from "lucide-react";
+import { Bell, User, LogOut } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { useNavigate } from "react-router-dom";
-
-// export default function Header ({ title }) {
-//   const { user } = useAuthStore();
-//
-//   return (
-//      <header className="header">
-//        <h1 className="header-title">{title}</h1>
-//        <div className="header-right">
-//
-//          {/* School badge */}
-//          <span className="header-school-badge">
-//           {user?.schoolName ?? "Demo School"}
-//         </span>
-//
-//          {/* Notifications */}
-//          <button className="header-icon-btn">
-//            <Bell/>
-//            <span className="header-notif-dot"/>
-//          </button>
-//
-//          {/* User */}
-//          <div className="header-user">
-//            <div className="header-avatar">
-//              <User/>
-//            </div>
-//            <div className="header-user-info">
-//              <span className="header-user-name">{user?.username ?? "Admin"}</span>
-//              <span className="header-user-role">{user?.role ?? "ADMIN"}</span>
-//            </div>
-//            <ChevronDown className="header-chevron"/>
-//          </div>
-//        </div>
-//      </header>
-//   );
-// }
 
 export default function Header ({ title }) {
   const { user, logout } = useAuthStore();
@@ -43,41 +8,48 @@ export default function Header ({ title }) {
   
   const handleLogout = () => {
     logout();
-    navigate("/landing");
+    navigate("/login");
   };
+  
+  const displayName = user?.firstName
+     ? `${user.firstName} ${user.lastName ?? ""}`.trim()
+     : "Admin";
+  
+  const roleLabel = user?.role?.replace("_", " ") ?? "ADMIN";
   
   return (
      <header className="header">
        <h1 className="header-title">{title}</h1>
        
        <div className="header-right">
-         {/* School badge */}
-         <span className="header-school-badge">
-          {user?.schoolName ?? "Demo School"}
-        </span>
+         {/* School badge — shown if schoolId is resolved */}
+         {user?.schoolId && (
+            <span className="header-school-badge">
+            School #{user.schoolId}
+          </span>
+         )}
          
          {/* Notifications */}
-         <button className="header-icon-btn">
+         <button className="header-icon-btn" title="Notifications">
            <Bell/>
            <span className="header-notif-dot"/>
          </button>
          
-         {/* User */}
+         {/* User info */}
          <div className="header-user">
            <div className="header-avatar">
              <User/>
            </div>
            <div className="header-user-info">
-             <span className="header-user-name">{user?.username ?? "Admin"}</span>
-             <span className="header-user-role">{user?.role ?? "ADMIN"}</span>
+             <span className="header-user-name">{displayName}</span>
+             <span className="header-user-role">{roleLabel}</span>
            </div>
-           <ChevronDown className="header-chevron"/>
          </div>
          
-         {/* Logout / Switch school */}
+         {/* Logout */}
          <button
             className="header-icon-btn"
-            title="Switch School / Logout"
+            title="Logout"
             onClick={handleLogout}
             style={{ marginLeft: 4 }}
          >

@@ -9,7 +9,7 @@ skooly-client/
 │   │   ├── authApi.js
 │   │   ├── studentApi.js
 │   │   ├── teacherApi.js
-│   │   ├── classApi.js
+│   │   ├── classroomApi.js
 │   │   ├── attendanceApi.js
 │   │   ├── feeApi.js
 │   │   ├── examApi.js

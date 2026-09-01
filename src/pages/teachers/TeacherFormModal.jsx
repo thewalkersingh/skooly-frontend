@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
 const GENDERS = ["MALE", "FEMALE", "OTHER"];
-const STATUSES = ["ACTIVE", "INACTIVE"];
+const STATUSES = ["ACTIVE", "INACTIVE", "LEFT", "TRANSFERRED", "RETIRED"];
 
 const EMPTY = {
-  firstName: "", lastName: "", dob: "", gender: "", address: "",
-  phone: "", email: "", joiningDate: "", subjectId: "",
-  qualification: "", experience: "", photo: "",
+  firstName: "", lastName: "", dob: "", gender: "",
+  houseNumber: "", streetName: "", city: "", state: "", zipCode: "",
+  phone: "", email: "", joiningDate: "",
+  subjectIds: [],
+  qualification: "", experience: "",
   status: "ACTIVE", username: "", password: "",
 };
 
@@ -15,36 +17,42 @@ function SectionLabel ({ text }) {
   return (
      <p style={{
        fontSize: "var(--font-size-xs)", fontWeight: 600, color: "var(--gray-500)",
-       textTransform: "uppercase", letterSpacing: "0.05em", margin: "16px 0 12px"
+       textTransform: "uppercase", letterSpacing: "0.05em", margin: "16px 0 12px",
      }}>
        {text}
      </p>
   );
 }
 
-export default function TeacherFormModal ({ open, onClose, onSubmit, initial, subjects, loading }) {
+export default function TeacherFormModal ({ open, onClose, onSubmit, initial, subjects, schoolId, loading }) {
   const [form, setForm] = useState(EMPTY);
   const isEdit = !!initial;
   
   useEffect(() => {
-    if (open) {
-      setForm(initial ? {
-        firstName: initial.firstName || "",
-        lastName: initial.lastName || "",
-        dob: initial.dob || "",
-        gender: initial.gender || "",
-        address: initial.address || "",
-        phone: initial.phone || "",
-        email: initial.email || "",
-        joiningDate: initial.joiningDate || "",
-        subjectId: initial.subjectId || "",
-        qualification: initial.qualification || "",
-        experience: initial.experience || "",
-        photo: initial.photo || "",
-        status: initial.status || "ACTIVE",
-        username: initial.username || "",
+    if (!open) return;
+    if (initial) {
+      setForm({
+        firstName: initial.identity?.firstName ?? "",
+        lastName: initial.identity?.lastName ?? "",
+        dob: initial.dob ?? "",
+        gender: initial.identity?.gender ?? "",
+        houseNumber: initial.address?.houseNumber ?? "",
+        streetName: initial.address?.streetName ?? "",
+        city: initial.address?.city ?? "",
+        state: initial.address?.state ?? "",
+        zipCode: initial.address?.zipCode ?? "",
+        phone: initial.identity?.phone ?? "",
+        email: initial.identity?.email ?? "",
+        joiningDate: initial.joiningDate ?? "",
+        subjectIds: initial.subjects?.map((s) => s.id) ?? [],
+        qualification: initial.qualification ?? "",
+        experience: initial.experience?.toString() ?? "",
+        status: initial.teacherStatus ?? "ACTIVE",
+        username: initial.identity?.username ?? "",
         password: "",
-      } : EMPTY);
+      });
+    } else {
+      setForm(EMPTY);
     }
   }, [initial, open]);
   
@@ -52,12 +60,40 @@ export default function TeacherFormModal ({ open, onClose, onSubmit, initial, su
   
   const set = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
   
+  const toggleSubject = (id) => {
+    setForm((f) => ({
+      ...f,
+      subjectIds: f.subjectIds.includes(id)
+         ? f.subjectIds.filter((s) => s !== id)
+         : [...f.subjectIds, id],
+    }));
+  };
+  
   const handleSubmit = (e) => {
     e.preventDefault();
-    const payload = { ...form };
-    payload.subjectId = payload.subjectId ? Number(payload.subjectId) : null;
-    payload.experience = payload.experience ? Number(payload.experience) : null;
-    if (isEdit && !payload.password) delete payload.password;
+    const payload = {
+      firstName: form.firstName,
+      lastName: form.lastName,
+      dob: form.dob || null,
+      gender: form.gender || null,
+      address: {
+        houseNumber: form.houseNumber || null,
+        streetName: form.streetName || null,
+        city: form.city || null,
+        state: form.state || null,
+        zipCode: form.zipCode || null,
+      },
+      phone: form.phone || null,
+      email: form.email || null,
+      joiningDate: form.joiningDate || null,
+      subjectIds: form.subjectIds,
+      qualification: form.qualification || null,
+      experience: form.experience ? Number(form.experience) : null,
+      teacherStatus: form.status,
+      schoolId,
+      username: form.username,
+    };
+    if (!isEdit || form.password) payload.password = form.password;
     onSubmit(payload);
   };
   
@@ -106,9 +142,29 @@ export default function TeacherFormModal ({ open, onClose, onSubmit, initial, su
                  <input className="form-input" type="email" value={form.email} onChange={set("email")}/>
                </div>
              </div>
-             <div className="form-group">
-               <label className="form-label">Address</label>
-               <textarea className="form-textarea" rows={2} value={form.address} onChange={set("address")}/>
+             
+             <SectionLabel text="Address"/>
+             <div className="form-grid">
+               <div className="form-group">
+                 <label className="form-label">House No.</label>
+                 <input className="form-input" value={form.houseNumber} onChange={set("houseNumber")}/>
+               </div>
+               <div className="form-group">
+                 <label className="form-label">Street</label>
+                 <input className="form-input" value={form.streetName} onChange={set("streetName")}/>
+               </div>
+               <div className="form-group">
+                 <label className="form-label">City</label>
+                 <input className="form-input" value={form.city} onChange={set("city")}/>
+               </div>
+               <div className="form-group">
+                 <label className="form-label">State</label>
+                 <input className="form-input" value={form.state} onChange={set("state")}/>
+               </div>
+               <div className="form-group">
+                 <label className="form-label">Zip Code</label>
+                 <input className="form-input" value={form.zipCode} onChange={set("zipCode")}/>
+               </div>
              </div>
              
              <SectionLabel text="Professional Details"/>
@@ -121,13 +177,6 @@ export default function TeacherFormModal ({ open, onClose, onSubmit, initial, su
                  <label className="form-label">Status</label>
                  <select className="form-select" value={form.status} onChange={set("status")}>
                    {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-                 </select>
-               </div>
-               <div className="form-group">
-                 <label className="form-label">Subject</label>
-                 <select className="form-select" value={form.subjectId} onChange={set("subjectId")}>
-                   <option value="">— Select Subject —</option>
-                   {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
                  </select>
                </div>
                <div className="form-group">
@@ -147,6 +196,23 @@ export default function TeacherFormModal ({ open, onClose, onSubmit, initial, su
                </div>
              </div>
              
+             <SectionLabel text="Subjects"/>
+             <div className="subject-checkboxes">
+               {subjects.length === 0
+                  ? <p style={{ fontSize: "var(--font-size-sm)", color: "var(--gray-400)" }}>No subjects
+                                                                                             available.</p>
+                  : subjects.map((s) => (
+                     <label key={s.id} className="subject-checkbox-item">
+                       <input
+                          type="checkbox"
+                          checked={form.subjectIds.includes(s.id)}
+                          onChange={() => toggleSubject(s.id)}
+                       />
+                       <span>{s.subjectName}</span>
+                     </label>
+                  ))}
+             </div>
+             
              <SectionLabel text="Login Account"/>
              <div className="form-grid">
                <div className="form-group">
@@ -159,8 +225,9 @@ export default function TeacherFormModal ({ open, onClose, onSubmit, initial, su
                </div>
                <div className="form-group">
                  <label className={isEdit ? "form-label" : "form-label required"}>
-                   Password {isEdit &&
-                    <span style={{ fontWeight: 400, color: "var(--gray-400)" }}>(leave blank to keep)</span>}
+                   Password{" "}
+                   {isEdit &&
+                      <span style={{ fontWeight: 400, color: "var(--gray-400)" }}>(leave blank to keep)</span>}
                  </label>
                  <input className="form-input"
                         type="password"

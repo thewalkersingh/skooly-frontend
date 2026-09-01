@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { CheckCircle, XCircle, Clock, Users, Save } from "lucide-react";
 import { attendanceApi } from "@/services/attendanceApi";
-import { classApi } from "@/services/classApi";
+import { classroomApi } from "@/services/classroomApi.js";
 import { studentApi } from "@/services/studentApi";
 import { useAuthStore } from "@/store/authStore";
 import { useToast } from "@/hooks/useToast";
@@ -47,7 +47,7 @@ export default function AttendancePage () {
   
   // fetch classes
   useEffect(() => {
-    classApi.getAll(schoolId)
+    classroomApi.getAll(schoolId)
        .then((res) => {
          const data = Array.isArray(res.data) ? res.data : res.data.content ?? [];
          setClasses(data);

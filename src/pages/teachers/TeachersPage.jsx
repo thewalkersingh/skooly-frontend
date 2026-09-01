@@ -1,29 +1,46 @@
 import { useState, useEffect, useCallback } from "react";
 import { Plus, Search, Pencil, Trash2, Users } from "lucide-react";
 import { teacherApi } from "@/services/teacherApi";
-import { classApi } from "@/services/classApi";
+import { subjectApi } from "@/services/subjectApi";
 import { useAuthStore } from "@/store/authStore";
 import { useToast } from "@/hooks/useToast";
 import TeacherFormModal from "./TeacherFormModal";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import ToastContainer from "@/components/ui/ToastContainer";
 import "./teachers.css";
+import { accountApi } from "@/services/accountApi";
 
 const STATUS_BADGE = {
   ACTIVE: "badge badge-success",
   INACTIVE: "badge badge-gray",
+  LEFT: "badge badge-gray",
+  TRANSFERRED: "badge badge-warning",
+  RETIRED: "badge badge-info",
+  DELETED: "badge badge-danger",
 };
 
-function getInitials (firstName, lastName) {
-  return ((firstName?.[0] ?? "") + (lastName?.[0] ?? "")).toUpperCase();
+function getInitials (identity) {
+  return ((identity?.firstName?.[0] ?? "") + (identity?.lastName?.[0] ?? "")).toUpperCase();
+}
+
+function getFullName (identity) {
+  return [identity?.firstName, identity?.lastName].filter(Boolean).join(" ") || "—";
+}
+
+function unwrapPage (res) {
+  const d = res.data?.data;
+  if (!d) return [];
+  if (Array.isArray(d)) return d;
+  return d.data ?? d.content ?? [];
 }
 
 export default function TeachersPage () {
   const { user } = useAuthStore();
   const schoolId = user?.schoolId;
   const { toasts, toast } = useToast();
-  
+  const [creatingAccount, setCreatingAccount] = useState(null); // teacher being acted on
   const [teachers, setTeachers] = useState([]);
+  const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState("");
@@ -31,21 +48,24 @@ export default function TeachersPage () {
   const [editTarget, setEditTarget] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
-  const [subjects, setSubjects] = useState([]);
   
-  // fetch subjects for dropdown
+  // ── subjects dropdown ──────────────────────────────────
   useEffect(() => {
-    classApi.getAllSubjects(schoolId)
-       .then((res) => setSubjects(res.data))
+    if (!schoolId) return;
+    subjectApi.getBySchool(schoolId)
+       .then((res) => setSubjects(unwrapPage(res)))
        .catch((err) => toast({ message: "Failed to load subjects: " + err.message, type: "error" }));
   }, [schoolId]);
   
-  // fetch teachers
+  // ── fetch teachers ─────────────────────────────────────
   const fetchTeachers = useCallback(async (q) => {
+    if (!schoolId) return;
     setLoading(true);
     try {
-      const res = await teacherApi.getAll(schoolId, q);
-      setTeachers(Array.isArray(res.data) ? res.data : res.data.content ?? []);
+      const res = q?.trim()
+         ? await teacherApi.searchByName(schoolId, q.trim())
+         : await teacherApi.getBySchool(schoolId);
+      setTeachers(unwrapPage(res));
     } catch (err) {
       toast({ message: err.message, type: "error" });
     } finally {
@@ -73,10 +93,10 @@ export default function TeachersPage () {
     setSaving(true);
     try {
       if (editTarget) {
-        await teacherApi.update(schoolId, editTarget.id, payload);
+        await teacherApi.update(editTarget.id, payload);
         toast({ message: "Teacher updated successfully" });
       } else {
-        await teacherApi.create(schoolId, payload);
+        await teacherApi.create(payload);
         toast({ message: "Teacher added successfully" });
       }
       setFormOpen(false);
@@ -91,7 +111,7 @@ export default function TeachersPage () {
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      await teacherApi.delete(schoolId, deleteTarget.id);
+      await teacherApi.delete(deleteTarget.id);
       toast({ message: "Teacher deleted successfully" });
       setDeleteTarget(null);
       fetchTeachers(search);
@@ -101,12 +121,33 @@ export default function TeachersPage () {
       setDeleting(false);
     }
   };
-  
+  const handleCreateAccount = async (teacher) => {
+    setCreatingAccount(teacher.id);
+    try {
+      await accountApi.createAccount({
+        firstName: teacher.identity?.firstName,
+        lastName: teacher.identity?.lastName,
+        phone: teacher.identity?.phone,
+        email: teacher.identity?.email ?? null,
+        gender: teacher.identity?.gender,
+        role: "TEACHER",
+        schoolId: schoolId,
+        roleEntityId: teacher.id,
+      });
+      toast({ message: `Account created for ${getFullName(teacher.identity)} — pending approval.` });
+    } catch (err) {
+      toast({ message: err.message, type: "error" });
+    } finally {
+      setCreatingAccount(null);
+    }
+  };
   return (
      <div>
        <div className="page-header-row">
          <div>
-           <h2 style={{ fontSize: "var(--font-size-2xl)", fontWeight: 700, color: "var(--gray-900)" }}>Teachers</h2>
+           <h2 style={{ fontSize: "var(--font-size-2xl)", fontWeight: 700, color: "var(--gray-900)" }}>
+             Teachers
+           </h2>
            <p style={{ fontSize: "var(--font-size-sm)", color: "var(--gray-500)", marginTop: 4 }}>
              Manage teacher profiles, subjects, and assignments.
            </p>
@@ -121,7 +162,7 @@ export default function TeachersPage () {
            <Search/>
            <input
               className="search-input"
-              placeholder="Search by name or email..."
+              placeholder="Search by name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
            />
@@ -138,7 +179,7 @@ export default function TeachersPage () {
              <tr>
                <th>Teacher</th>
                <th>Gender</th>
-               <th>Subject</th>
+               <th>Subjects</th>
                <th>Phone</th>
                <th>Joining Date</th>
                <th>Experience</th>
@@ -168,21 +209,33 @@ export default function TeachersPage () {
                    <tr key={t.id}>
                      <td>
                        <div className="teacher-name-cell">
-                         <div className="teacher-avatar">{getInitials(t.firstName, t.lastName)}</div>
+                         <div className="teacher-avatar">{getInitials(t.identity)}</div>
                          <div>
-                           <div className="name">{t.fullName}</div>
-                           <div className="username">@{t.username}</div>
+                           <div className="name">{getFullName(t.identity)}</div>
+                           <div className="username">{t.identity?.email ?? "—"}</div>
                          </div>
                        </div>
                      </td>
-                     <td>{t.gender ?? "—"}</td>
-                     <td>{t.subjectName ?? <span style={{ color: "var(--gray-400)" }}>—</span>}</td>
-                     <td>{t.phone ?? "—"}</td>
-                     <td>{t.joiningDate ?? "—"}</td>
-                     <td>{t.experience != null ? t.experience + " yr" + (t.experience !== 1 ? "s" : "") : "—"}</td>
+                     <td>{t.identity?.gender ?? "—"}</td>
                      <td>
-                      <span className={STATUS_BADGE[t.status] || "badge badge-gray"}>
-                        {t.status}
+                       {t.subjects?.length
+                          ? t.subjects.map((s) => (
+                             <span key={s.id} className="badge badge-info" style={{ marginRight: 4 }}>
+                              {s.subjectName}
+                            </span>
+                          ))
+                          : <span style={{ color: "var(--gray-400)" }}>—</span>}
+                     </td>
+                     <td>{t.identity?.phone ?? "—"}</td>
+                     <td>{t.joiningDate ?? "—"}</td>
+                     <td>
+                       {t.experience != null
+                          ? `${t.experience} yr${t.experience !== 1 ? "s" : ""}`
+                          : "—"}
+                     </td>
+                     <td>
+                      <span className={STATUS_BADGE[t.teacherStatus] || "badge badge-gray"}>
+                        {t.teacherStatus}
                       </span>
                      </td>
                      <td>
@@ -214,6 +267,7 @@ export default function TeachersPage () {
           onSubmit={handleSubmit}
           initial={editTarget}
           subjects={subjects}
+          schoolId={schoolId}
           loading={saving}
        />
        
@@ -223,7 +277,8 @@ export default function TeachersPage () {
           onConfirm={handleDelete}
           loading={deleting}
           title="Delete Teacher"
-          message={"Are you sure you want to delete " + (deleteTarget?.fullName ?? "this teacher") + "? This action cannot be undone."}
+          message={`Are you sure you want to delete ${deleteTarget ? getFullName(deleteTarget.identity)
+             : "this teacher"}? This action cannot be undone.`}
        />
        
        <ToastContainer toasts={toasts}/>
